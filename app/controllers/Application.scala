@@ -6,13 +6,13 @@ import play.api.mvc._
 import models.TwitterApi
 import play.api.data._
 import play.api.data.Forms._
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
+import javax.inject.Inject
+import play.api.i18n.{MessagesApi, I18nSupport}
 
 case class QueryData(keyword: String, since: DateTime)
 
-object Application extends Controller {
-
+class Application @Inject() (val messagesApi: MessagesApi)
+  extends Controller with I18nSupport {
   val queryForm = Form(
     mapping(
       "keyword" -> text,

@@ -18,6 +18,8 @@ libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "1.7"
 )
 
+routesGenerator := InjectedRoutesGenerator
+
 unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
