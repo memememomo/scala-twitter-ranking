@@ -1,7 +1,21 @@
-@(message: String)
+@import twitter4j._
+@(queryForm: Form[QueryData], result:Option[List[Status]])(implicit messages: Messages)
 
 @main("Welcome to Play") {
+    @helper.form(action = routes.Application.search) {
+        @helper.inputText(queryForm("keyword"))
+        @helper.inputDate(queryForm("since"))
+        <input type="submit" value="Search">
+    }
 
-    @play20.welcome(message)
-
+    @result match {
+        case Some(statusList) => {
+            <ul>
+            @statusList.foreach(status => {
+                <li>status.getText()</li>
+            })
+            </ul>
+        }
+        case None => {  }
+    }
 }
