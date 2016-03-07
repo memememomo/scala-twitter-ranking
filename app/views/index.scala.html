@@ -11,9 +11,9 @@
     @result match {
         case Some(statusList) => {
             <ul>
-            @statusList.foreach(status => {
-                <li>status.getText()</li>
-            })
+                @for(status <- statusList) {
+                    <li>@status.getText()</li>
+                }
             </ul>
         }
         case None => {  }
