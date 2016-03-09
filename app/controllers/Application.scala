@@ -1,13 +1,24 @@
 package controllers
 
+import java.io.{ObjectInputStream, ByteArrayInputStream, ObjectOutputStream, ByteArrayOutputStream}
+
+import akka.serialization.Serialization
+import org.apache.commons.lang3
+import org.apache.commons.lang3.SerializationUtils
 import org.joda.time.DateTime
 import play.api._
+import play.api.libs.json.{JsPath, Json}
 import play.api.mvc._
-import models.TwitterApi
+import models._
 import play.api.data._
 import play.api.data.Forms._
 import javax.inject.Inject
 import play.api.i18n.{MessagesApi, I18nSupport}
+import com.redis._
+import serialization._
+import Parse.Implicits.parseByteArray
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 case class QueryData(keyword: String, since: DateTime)
 
@@ -20,16 +31,44 @@ class Application @Inject() (val messagesApi: MessagesApi)
     )(QueryData.apply)(QueryData.unapply)
   )
 
+
+
   def index = Action { implicit req =>
     Ok(views.html.index(queryForm, None))
   }
 
   def search = Action { implicit req =>
+    implicit val rankingReads: Reads[Ranking] = (
+      (JsPath \ "rank").read[Int] and
+      (JsPath \ "name").read[String] and
+      (JsPath \ "text").read[String] and
+      (JsPath \ "favorite").read[Int] and
+      (JsPath \ "retweet").read[Int]
+    )(Ranking.apply _)
+
+    implicit val rankingWrites: Writes[Ranking] = (
+      (JsPath \ "rank").write[Int] and
+      (JsPath \ "name").write[String] and
+      (JsPath \ "text").write[String] and
+      (JsPath \ "favorite").write[Int] and
+      (JsPath \ "retweet").write[Int]
+    )(unlift(Ranking.unapply))
+
     val queryData = queryForm.bindFromRequest.get
-    val ranking = TwitterApi.ranking(
-      queryData.since,
-      queryData.keyword
-    )
-    Ok(views.html.index(queryForm, Some(ranking)))
+    val r = new RedisClient("localhost", 6379)
+    r.get(queryData.toString) match {
+      case Some(r) => {
+        val json = Json.parse(r)
+        val ranking = json.validate[List[Ranking]]
+        Ok(views.html.index(queryForm, ranking.asOpt))
+      }
+      case None =>
+        val ranking = TwitterApi.ranking(
+          queryData.since,
+          queryData.keyword
+        )
+        r.set(queryData.toString, Json.toJson(ranking).toString)
+        Ok(views.html.index(queryForm, Some(ranking)))
+    }
   }
 }

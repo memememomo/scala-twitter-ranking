@@ -7,9 +7,11 @@ import com.typesafe.config.ConfigFactory
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
+case class Ranking(rank: Int, name: String, text: String, favorite: Int, retweet: Int)
 
 object TwitterApi {
-  def config = {
+
+ def config = {
     val config = ConfigFactory.load()
     val cb = new ConfigurationBuilder
     cb.setOAuthConsumerKey(config.getString("consumerKey"))
@@ -38,9 +40,17 @@ object TwitterApi {
     }
   }
 
-  def ranking(since: DateTime, keyword: String): List[Status] = {
+  def ranking(since: DateTime, keyword: String): List[Ranking] = {
     search(since, keyword)
       .filter(!_.isRetweet)
       .sortWith(_.getFavoriteCount > _.getFavoriteCount)
+      .zipWithIndex
+      .map{ case(status:Status, rank: Int) => Ranking(
+        rank+1,
+        status.getUser.getName,
+        status.getText,
+        status.getFavoriteCount,
+        status.getRetweetCount
+      )}
   }
 }

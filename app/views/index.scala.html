@@ -1,5 +1,4 @@
-@import twitter4j._
-@(queryForm: Form[QueryData], result:Option[List[Status]])(implicit messages: Messages)
+@(queryForm: Form[QueryData], result:Option[List[Ranking]])(implicit messages: Messages)
 
 @main("Welcome to Play") {
     @helper.form(action = routes.Application.search) {
@@ -12,7 +11,9 @@
         case Some(statusList) => {
             <ul>
                 @for(status <- statusList) {
-                    <li>@status.getText()</li>
+                    <ol>
+                        @status.rank : @status.name : @status.favorite : @status.retweet : @status.text
+                    </ol>
                 }
             </ul>
         }
