@@ -7,7 +7,7 @@ import com.typesafe.config.ConfigFactory
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
-case class Ranking(rank: Int, name: String, text: String, favorite: Int, retweet: Int)
+case class Ranking(rank: Int, name: String, text: String, favorite: Int, retweet: Int, imageUrls: List[String])
 
 object TwitterApi {
 
@@ -50,7 +50,8 @@ object TwitterApi {
         status.getUser.getName,
         status.getText,
         status.getFavoriteCount,
-        status.getRetweetCount
+        status.getRetweetCount,
+        status.getMediaEntities.map(s => s.getMediaURL).toList
       )}
   }
 }

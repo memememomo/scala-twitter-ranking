@@ -43,7 +43,8 @@ class Application @Inject() (val messagesApi: MessagesApi)
       (JsPath \ "name").read[String] and
       (JsPath \ "text").read[String] and
       (JsPath \ "favorite").read[Int] and
-      (JsPath \ "retweet").read[Int]
+      (JsPath \ "retweet").read[Int] and
+      (JsPath \ "imageUrls").read[List[String]]
     )(Ranking.apply _)
 
     implicit val rankingWrites: Writes[Ranking] = (
@@ -51,7 +52,8 @@ class Application @Inject() (val messagesApi: MessagesApi)
       (JsPath \ "name").write[String] and
       (JsPath \ "text").write[String] and
       (JsPath \ "favorite").write[Int] and
-      (JsPath \ "retweet").write[Int]
+      (JsPath \ "retweet").write[Int] and
+      (JsPath \ "imageUrls").write[List[String]]
     )(unlift(Ranking.unapply))
 
     val queryData = queryForm.bindFromRequest.get
