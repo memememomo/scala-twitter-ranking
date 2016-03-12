@@ -28,15 +28,20 @@ object TwitterApi {
     val query = new Query()
     query.setSince(fmt.print(since))
     query.setUntil(fmt.print(since.plusDays(1)))
-    query.setQuery(keyword)
+    query.setCount(100)
+    query.setQuery(keyword + " -RT")
     search(query)
   }
 
   def search(query: Query): List[Status] = {
     val result = twitter.search(query)
     result.hasNext match {
-      case true => result.getTweets.toList ++ search(result.nextQuery())
-      case _ => result.getTweets.toList
+      case true =>
+        play.Logger.debug("Next result exists")
+        result.getTweets.toList ++ search(result.nextQuery())
+      case _ =>
+        play.Logger.debug("Finish searching")
+        result.getTweets.toList
     }
   }
 

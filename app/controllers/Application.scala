@@ -37,7 +37,7 @@ class Application @Inject() (val messagesApi: MessagesApi)
 
 
   def index = Action { implicit req =>
-    Ok(views.html.index(queryForm, None))
+   Ok(views.html.index(queryForm, None))
   }
 
   def search = Action { implicit req =>
@@ -60,20 +60,21 @@ class Application @Inject() (val messagesApi: MessagesApi)
     )(unlift(Ranking.unapply))
 
     val queryData = queryForm.bindFromRequest.get
-    val r = new RedisClient("localhost", 6379)
-    r.get(queryData.toString) match {
+    val redisClient = new RedisClient("localhost", 6379)
+    redisClient.get(queryData.toString) match {
       case Some(r) => {
+        Logger.debug("Hit cache. ttl: " + redisClient.ttl(queryData.toString))
         val json = Json.parse(r)
         val ranking = json.validate[List[Ranking]]
-        Ok(views.html.index(queryForm, ranking.asOpt))
+        Ok(views.html.index(queryForm.fill(queryData), ranking.asOpt))
       }
       case None =>
         val ranking = TwitterApi.ranking(
           queryData.since,
           queryData.keyword
         )
-        r.set(queryData.toString, Json.toJson(ranking).toString, true, Seconds(cacheSeconds))
-        Ok(views.html.index(queryForm, Some(ranking)))
+        redisClient.set(queryData.toString, Json.toJson(ranking).toString, false, Seconds(cacheSeconds))
+        Ok(views.html.index(queryForm.fill(queryData), Some(ranking)))
     }
   }
 }
