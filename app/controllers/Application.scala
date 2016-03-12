@@ -24,12 +24,15 @@ case class QueryData(keyword: String, since: DateTime)
 
 class Application @Inject() (val messagesApi: MessagesApi)
   extends Controller with I18nSupport {
+
   val queryForm = Form(
     mapping(
       "keyword" -> text,
       "since" -> jodaDate
     )(QueryData.apply)(QueryData.unapply)
   )
+
+  val cacheSeconds = 30L * 60
 
 
 
@@ -69,7 +72,7 @@ class Application @Inject() (val messagesApi: MessagesApi)
           queryData.since,
           queryData.keyword
         )
-        r.set(queryData.toString, Json.toJson(ranking).toString)
+        r.set(queryData.toString, Json.toJson(ranking).toString, true, Seconds(cacheSeconds))
         Ok(views.html.index(queryForm, Some(ranking)))
     }
   }
