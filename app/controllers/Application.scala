@@ -22,7 +22,7 @@ import play.api.libs.functional.syntax._
 
 case class QueryData(keyword: String, since: DateTime)
 
-class Application @Inject() (val messagesApi: MessagesApi)
+class Application @Inject() (implicit val messagesApi: MessagesApi, webJarAssets: WebJarAssets)
   extends Controller with I18nSupport {
 
   val queryForm = Form(

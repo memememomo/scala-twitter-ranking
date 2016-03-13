@@ -1,4 +1,4 @@
-@(queryForm: Form[QueryData], result:Option[List[Ranking]])(implicit messages: Messages)
+@(queryForm: Form[QueryData], result:Option[List[Ranking]])(implicit messages: Messages, webJarAssets: WebJarAssets)
 
 @main("Welcome to Play") {
     @helper.form(action = routes.Application.search) {
