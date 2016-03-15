@@ -21,6 +21,7 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
 case class QueryData(keyword: String, since: DateTime)
+case class KeywordData(keyword: String)
 
 class Application @Inject() (implicit val messagesApi: MessagesApi, webJarAssets: WebJarAssets)
   extends Controller with I18nSupport {
@@ -32,12 +33,23 @@ class Application @Inject() (implicit val messagesApi: MessagesApi, webJarAssets
     )(QueryData.apply)(QueryData.unapply)
   )
 
+  val keywordForm = Form(
+    mapping(
+      "keyword" -> text
+    )(KeywordData.apply)(KeywordData.unapply)
+  )
+
   val cacheSeconds = 30L * 60
 
 
 
   def index = Action { implicit req =>
-   Ok(views.html.index(queryForm, None))
+    val redisClient = new RedisClient("localhost", 6379)
+    val form = redisClient.get[String]("keyword") match {
+      case Some(k) => queryForm.fill(QueryData(k, DateTime.now))
+      case _ => queryForm
+    }
+    Ok(views.html.index(form, None))
   }
 
   def search = Action { implicit req =>
@@ -76,5 +88,17 @@ class Application @Inject() (implicit val messagesApi: MessagesApi, webJarAssets
         redisClient.set(queryData.toString, Json.toJson(ranking).toString, false, Seconds(cacheSeconds))
         Ok(views.html.index(queryForm.fill(queryData), Some(ranking)))
     }
+  }
+
+  def keyword = Action { implicit req =>
+    Ok(views.html.keyword(keywordForm))
+  }
+
+  def createKeyword = Action { implicit req =>
+    val keywordData = keywordForm.bindFromRequest.get
+    val redisClient = new RedisClient("localhost", 6379)
+    redisClient.set("keyword", keywordData.keyword)
+    Logger.debug("Create keyword: " + keywordData.keyword)
+    Redirect(routes.Application.keyword)
   }
 }
