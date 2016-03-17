@@ -9,7 +9,6 @@ import play.api.data._
 import play.api.data.Forms._
 import javax.inject.Inject
 import play.api.i18n.{MessagesApi, I18nSupport}
-import com.redis._
 
 case class QueryData(keyword: String, since: DateTime)
 case class KeywordData(keyword: String)
@@ -40,19 +39,18 @@ class Application @Inject() (implicit val messagesApi: MessagesApi, webJarAssets
 
   def search = Action { implicit req =>
     val queryData = queryForm.bindFromRequest.get
-    Storage.getRanking(queryData.toString) match {
-      case Some(r) => {
-        Ok(views.html.index(queryForm.fill(queryData), Some(r)))
-      }
-      case None =>
-        val ranking = TwitterApi.ranking(
-          queryData.since,
-          queryData.keyword
-        )
+    val ranking = TwitterApi.ranking(
+      queryData.since,
+      queryData.keyword
+    ) match {
+      case ranking if ranking.length > 0 =>
         Storage.setRanking(queryData.toString, ranking)
-        Ok(views.html.index(queryForm.fill(queryData), Some(ranking)))
+        Some(ranking)
+      case _ =>
+        Storage.getRanking(queryData.toString)
     }
-  }
+    Ok(views.html.index(queryForm.fill(queryData), ranking))
+ }
 
   def keyword = Action { implicit req =>
     Ok(views.html.keyword(keywordForm))
