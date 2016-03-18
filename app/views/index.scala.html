@@ -1,6 +1,13 @@
 @(queryForm: Form[QueryData], result:Option[List[Ranking]])(implicit messages: Messages, webJarAssets: WebJarAssets)
 
 @main("Welcome to Play") {
+    <script type="text/javascript">
+        $(function(){
+            $("[name=since]").change(function(){
+                $("[type=submit]").click();
+            });
+        });
+    </script>
     @helper.form(action = routes.Application.search) {
         @helper.inputText(queryForm("keyword"))
         @helper.inputDate(queryForm("since"))
