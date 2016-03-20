@@ -20,7 +20,7 @@
             <ul>
                 @for(status <- statusList) {
                     <ol>
-                        @status.rank : @status.name : @status.favorite : @status.retweet : @status.text<br>
+                        @status.rank : @status.screenName : @status.name : @status.favorite : @status.retweet : @status.text<br>
                         @for(url <- status.imageUrls) {
                         <img src="@url">
                         }

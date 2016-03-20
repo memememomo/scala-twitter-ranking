@@ -12,6 +12,7 @@ object Storage {
   implicit val rankingReads: Reads[Ranking] = (
     (JsPath \ "rank").read[Int] and
     (JsPath \ "name").read[String] and
+    (JsPath \ "screenName").read[String] and
     (JsPath \ "text").read[String] and
     (JsPath \ "favorite").read[Int] and
     (JsPath \ "retweet").read[Int] and
@@ -21,6 +22,7 @@ object Storage {
   implicit val rankingWrites: Writes[Ranking] = (
     (JsPath \ "rank").write[Int] and
     (JsPath \ "name").write[String] and
+    (JsPath \ "screenName").write[String] and
     (JsPath \ "text").write[String] and
     (JsPath \ "favorite").write[Int] and
     (JsPath \ "retweet").write[Int] and
