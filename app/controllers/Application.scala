@@ -34,7 +34,7 @@ class Application @Inject() (implicit val messagesApi: MessagesApi, webJarAssets
       case Some(k) => queryForm.fill(QueryData(k, DateTime.now))
       case _ => queryForm
     }
-    Ok(views.html.index(form, None))
+    Ok(views.html.index(form, None, None))
   }
 
   def search = Action { implicit req =>
@@ -49,7 +49,8 @@ class Application @Inject() (implicit val messagesApi: MessagesApi, webJarAssets
       case _ =>
         Storage.getRanking(queryData.toString)
     }
-    Ok(views.html.index(queryForm.fill(queryData), ranking))
+    val target = TwitterApi.searchTarget(queryData.since, queryData.keyword)
+    Ok(views.html.index(queryForm.fill(queryData), ranking, target))
  }
 
   def keyword = Action { implicit req =>

@@ -1,4 +1,5 @@
-@(queryForm: Form[QueryData], result:Option[List[Ranking]])(implicit messages: Messages, webJarAssets: WebJarAssets)
+@import twitter4j._
+@(queryForm: Form[QueryData], result:Option[List[Ranking]], target:Option[Status])(implicit messages: Messages, webJarAssets: WebJarAssets)
 
 @main("Welcome to Play") {
    @helper.form(action = routes.Application.search) {
@@ -7,7 +8,14 @@
         <input type="submit" value="Search">
     }
 
-    @result match {
+   @target match {
+       case Some(status) => {
+           @status.getText
+       }
+       case _ => {}
+   }
+
+   @result match {
         case Some(statusList) => {
             <ul>
                 @for(status <- statusList) {
@@ -21,5 +29,5 @@
             </ul>
         }
         case None => {  }
-    }
+   }
 }

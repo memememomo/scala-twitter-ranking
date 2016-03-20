@@ -59,4 +59,14 @@ object TwitterApi {
         status.getMediaEntities.map(s => s.getMediaURL).toList
       )}
   }
+
+  def searchTarget(since: DateTime, keyword: String) = {
+    val targetName = ConfigFactory.load().getString("targetScreenName")
+    search(since, keyword)
+      .filter(r => !r.isRetweet && r.getUser.getScreenName == targetName)
+      .sortWith((a, b) => b.getCreatedAt.after(a.getCreatedAt)) match {
+      case targets if targets.length > 0 => Some(targets.head)
+      case _ => None
+    }
+  }
 }
