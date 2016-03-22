@@ -53,10 +53,10 @@ object TwitterApi {
     }
   }
 
-  def ranking(since: DateTime, keyword: String): List[Ranking] = {
+  def ranking(since: DateTime, sort: String, keyword: String): List[Ranking] = {
     search(since, keyword)
       .filter(!_.isRetweet)
-      .sortWith(_.getFavoriteCount > _.getFavoriteCount)
+
       .zipWithIndex
       .map{ case(status:Status, rank: Int) => Ranking(
         rank+1,

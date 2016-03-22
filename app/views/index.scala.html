@@ -4,6 +4,7 @@
 @main("Welcome to Play") {
    @helper.form(action = routes.Application.search) {
         @helper.inputText(queryForm("keyword"))
+        @helper.select(queryForm("sort"), options = Seq(("like", "Like"), ("rt", "RT"), ("created", "Created")))
         @helper.inputDate(queryForm("since"))
         <input type="submit" value="Search">
     }
@@ -18,9 +19,9 @@
    @result match {
         case Some(statusList) => {
             <ul>
-                @for(status <- statusList) {
+                @for((status, i) <- statusList.zipWithIndex) {
                     <ol>
-                        @status.rank : @status.screenName : @status.name : @status.favorite : @status.retweet : @status.text<br>
+                        @i : @status.screenName : @status.name : @status.favorite : @status.retweet : @status.text<br>
                         @for(url <- status.imageUrls) {
                         <img src="@url">
                         }
