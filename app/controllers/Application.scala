@@ -40,7 +40,13 @@ class Application @Inject() (implicit val messagesApi: MessagesApi, webJarAssets
 
   def search = Action { implicit req =>
     val queryData = queryForm.bindFromRequest.get
-    val ranking = TwitterApi.ranking(
+    val ranking = searchOrCache(queryData)
+    val target = TwitterApi.searchTarget(queryData.since, queryData.keyword)
+    Ok(views.html.index(queryForm.fill(queryData), ranking, target))
+ }
+
+  def searchOrCache(queryData: QueryData) = {
+    TwitterApi.ranking(
       queryData.since,
       queryData.sort,
       queryData.keyword
@@ -56,9 +62,25 @@ class Application @Inject() (implicit val messagesApi: MessagesApi, webJarAssets
           case _ => None
         }
     }
-    val target = TwitterApi.searchTarget(queryData.since, queryData.keyword)
-    Ok(views.html.index(queryForm.fill(queryData), ranking, target))
- }
+  }
+
+  def cacheOrSearch(queryData: QueryData) = {
+    Storage.getRanking(queryData.keyword) match {
+      case Some(ranking) => Some(sortRanking(ranking, queryData.sort))
+      case None => {
+        TwitterApi.ranking(
+          queryData.since,
+          queryData.sort,
+          queryData.keyword
+        ) match {
+          case ranking =>
+            Storage.setRanking(queryData.toString, ranking)
+            Some(sortRanking(ranking, queryData.sort))
+          case _ => None
+        }
+      }
+    }
+  }
 
   def sortRanking(ranking: List[Ranking], sort: String) = {
      ranking.sortWith((a, b) =>
