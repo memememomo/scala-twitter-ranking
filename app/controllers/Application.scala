@@ -61,10 +61,11 @@ class Application @Inject() (implicit val messagesApi: MessagesApi, webJarAssets
  }
 
   def sortRanking(ranking: List[Ranking], sort: String) = {
-     ranking.sortWith(
+     ranking.sortWith((a, b) =>
         sort match {
-          case "like" => _.favorite > _.favorite
-          case "rt" => _.retweet > _.retweet
+          case "like" => a.favorite > b.favorite
+          case "rt" => a.retweet > b.retweet
+          case "created" => b.created.after(a.created)
         }
      )
   }

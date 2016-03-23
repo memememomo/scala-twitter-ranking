@@ -1,5 +1,7 @@
 package models
 
+import java.util.Date
+
 import com.redis.RedisClient
 import play.api.Logger
 import play.api.libs.json._
@@ -15,6 +17,7 @@ object Storage {
     (JsPath \ "text").read[String] and
     (JsPath \ "favorite").read[Int] and
     (JsPath \ "retweet").read[Int] and
+    (JsPath \ "created").read[Date] and
     (JsPath \ "imageUrls").read[List[String]]
   )(Ranking.apply _)
 
@@ -24,6 +27,7 @@ object Storage {
     (JsPath \ "text").write[String] and
     (JsPath \ "favorite").write[Int] and
     (JsPath \ "retweet").write[Int] and
+    (JsPath \ "created").write[Date] and
     (JsPath \ "imageUrls").write[List[String]]
   )(unlift(Ranking.unapply))
 

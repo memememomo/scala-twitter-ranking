@@ -1,7 +1,10 @@
 package models
 
+import java.util.Date
+
 import twitter4j._
 import twitter4j.conf._
+
 import scala.collection.JavaConversions._
 import com.typesafe.config.ConfigFactory
 import org.joda.time.DateTime
@@ -13,6 +16,7 @@ case class Ranking(
                     text: String,
                     favorite: Int,
                     retweet: Int,
+                    created: Date,
                     imageUrls: List[String]
                   )
 
@@ -61,6 +65,7 @@ object TwitterApi {
         status.getText,
         status.getFavoriteCount,
         status.getRetweetCount,
+        status.getCreatedAt,
         status.getMediaEntities.map(s => s.getMediaURL).toList
       )}
   }

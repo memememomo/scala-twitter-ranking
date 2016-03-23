@@ -25,6 +25,7 @@
                         @for(url <- status.imageUrls) {
                         <img src="@url">
                         }
+                        @status.created.format("YYYY-MM-dd hh:mm:ss")
                     </ol>
                 }
             </ul>
