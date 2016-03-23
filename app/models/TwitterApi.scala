@@ -8,7 +8,6 @@ import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
 case class Ranking(
-                    rank: Int,
                     name: String,
                     screenName: String,
                     text: String,
@@ -56,10 +55,7 @@ object TwitterApi {
   def ranking(since: DateTime, sort: String, keyword: String): List[Ranking] = {
     search(since, keyword)
       .filter(!_.isRetweet)
-
-      .zipWithIndex
-      .map{ case(status:Status, rank: Int) => Ranking(
-        rank+1,
+      .map{ status => Ranking(
         status.getUser.getName,
         status.getUser.getScreenName,
         status.getText,

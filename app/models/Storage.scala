@@ -10,7 +10,6 @@ object Storage {
   val redisClient = new RedisClient("localhost", 6379)
 
   implicit val rankingReads: Reads[Ranking] = (
-    (JsPath \ "rank").read[Int] and
     (JsPath \ "name").read[String] and
     (JsPath \ "screenName").read[String] and
     (JsPath \ "text").read[String] and
@@ -20,7 +19,6 @@ object Storage {
   )(Ranking.apply _)
 
   implicit val rankingWrites: Writes[Ranking] = (
-    (JsPath \ "rank").write[Int] and
     (JsPath \ "name").write[String] and
     (JsPath \ "screenName").write[String] and
     (JsPath \ "text").write[String] and

@@ -21,7 +21,7 @@
             <ul>
                 @for((status, i) <- statusList.zipWithIndex) {
                     <ol>
-                        @i : @status.screenName : @status.name : @status.favorite : @status.retweet : @status.text<br>
+                        @(i+1) : @status.screenName : @status.name : @status.favorite : @status.retweet : @status.text<br>
                         @for(url <- status.imageUrls) {
                         <img src="@url">
                         }
