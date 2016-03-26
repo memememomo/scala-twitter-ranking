@@ -1,5 +1,5 @@
 @import twitter4j._
-@(queryForm: Form[QueryData], result:Option[List[Ranking]], target:Option[Status])(implicit messages: Messages, webJarAssets: WebJarAssets)
+@(queryForm: Form[QueryData], result:Option[List[Ranking]], target:Option[Status], userAgent:Option[Map[String,String]])(implicit messages: Messages, webJarAssets: WebJarAssets)
 
 @main("Welcome to Play") {
    @helper.form(action = routes.Application.search) {
@@ -32,4 +32,5 @@
         }
         case None => {  }
    }
+
 }

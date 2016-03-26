@@ -8,7 +8,10 @@ import models._
 import play.api.data._
 import play.api.data.Forms._
 import javax.inject.Inject
-import play.api.i18n.{MessagesApi, I18nSupport}
+import collection.JavaConversions._
+
+import is.tagomor.woothee.Classifier
+import play.api.i18n.{I18nSupport, MessagesApi}
 
 case class QueryData(keyword: String, sort: String, since: DateTime)
 case class KeywordData(keyword: String)
@@ -35,14 +38,18 @@ class Application @Inject() (implicit val messagesApi: MessagesApi, webJarAssets
       case Some(k) => queryForm.fill(QueryData(k, "created", DateTime.now))
       case _ => queryForm
     }
-    Ok(views.html.index(form, None, None))
+    Ok(views.html.index(form, None, None, None))
   }
 
   def search = Action { implicit req =>
+    val userAgent = req.headers.get("User-Agent") match {
+      case Some(u) => Some(Classifier.parse(u).toMap)
+      case _ => None
+    }
     val queryData = queryForm.bindFromRequest.get
     val ranking = searchOrCache(queryData)
     val target = TwitterApi.searchTarget(queryData.since, queryData.keyword)
-    Ok(views.html.index(queryForm.fill(queryData), ranking, target))
+    Ok(views.html.index(queryForm.fill(queryData), ranking, target, userAgent))
  }
 
   def searchOrCache(queryData: QueryData) = {

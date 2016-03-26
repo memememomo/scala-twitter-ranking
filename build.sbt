@@ -18,7 +18,8 @@ libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "1.7",
   "net.debasishg" %% "redisclient" % "3.0",
   "org.webjars" %% "webjars-play" % "2.5.0",
-  "org.webjars" % "bootstrap" % "3.3.4"
+  "org.webjars" % "bootstrap" % "3.3.4",
+  "is.tagomor.woothee" % "woothee-java" % "1.3.1"
 )
 
 routesGenerator := InjectedRoutesGenerator
