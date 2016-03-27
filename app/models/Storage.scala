@@ -15,7 +15,11 @@ object Storage {
     val config = ConfigFactory.load()
     new RedisClient(
       config.getString("redisHost"),
-      config.getInt("redisPort")
+      config.getInt("redisPort"),
+      secret = config.getString("redisSecret") match {
+        case secret if secret != "" => Some(secret)
+        case _ => None
+      }
     )
   }
 
