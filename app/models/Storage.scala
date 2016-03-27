@@ -3,13 +3,21 @@ package models
 import java.util.Date
 
 import com.redis.RedisClient
+import com.typesafe.config.ConfigFactory
 import play.api.Logger
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
 object Storage {
   val keywordCacheName = "keyword"
-  val redisClient = new RedisClient("localhost", 6379)
+
+  def redisClient = {
+    val config = ConfigFactory.load()
+    new RedisClient(
+      config.getString("redisHost"),
+      config.getInt("redisPort")
+    )
+  }
 
   implicit val rankingReads: Reads[Ranking] = (
     (JsPath \ "name").read[String] and
