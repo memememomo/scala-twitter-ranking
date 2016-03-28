@@ -75,7 +75,7 @@ object TwitterApi {
     search(since, keyword)
       .filter(r => !r.isRetweet && r.getUser.getScreenName == targetName)
       .sortWith((a, b) => b.getCreatedAt.after(a.getCreatedAt)) match {
-      case targets if targets.length > 0 => Some(targets.head)
+      case targets if targets.nonEmpty => Some(targets.head)
       case _ => None
     }
   }
