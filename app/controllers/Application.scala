@@ -8,8 +8,10 @@ import models._
 import play.api.data._
 import play.api.data.Forms._
 import javax.inject.Inject
-import collection.JavaConversions._
 
+import com.typesafe.config.ConfigFactory
+
+import collection.JavaConversions._
 import is.tagomor.woothee.Classifier
 import play.api.i18n.{I18nSupport, MessagesApi}
 
@@ -21,15 +23,15 @@ class Application @Inject() (implicit val messagesApi: MessagesApi, webJarAssets
 
   val queryForm = Form(
     mapping(
-      "keyword" -> text,
-      "sort" -> text,
+      "keyword" -> nonEmptyText,
+      "sort" -> nonEmptyText,
       "since" -> jodaDate
     )(QueryData.apply)(QueryData.unapply)
   )
 
   val keywordForm = Form(
     mapping(
-      "keyword" -> text
+      "keyword" -> nonEmptyText
     )(KeywordData.apply)(KeywordData.unapply)
   )
 
