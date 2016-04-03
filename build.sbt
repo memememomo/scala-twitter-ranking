@@ -19,7 +19,8 @@ libraryDependencies ++= Seq(
   "net.debasishg" %% "redisclient" % "3.0",
   "org.webjars" %% "webjars-play" % "2.5.0",
   "org.webjars" % "bootstrap" % "3.3.4",
-  "is.tagomor.woothee" % "woothee-java" % "1.3.1"
+  "is.tagomor.woothee" % "woothee-java" % "1.3.1",
+  "org.webjars" % "react" % "0.14.7"
 )
 
 routesGenerator := InjectedRoutesGenerator

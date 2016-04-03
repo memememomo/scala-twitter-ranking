@@ -8,3 +8,5 @@ resolvers ++= Seq(
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.2")
 
 addSbtPlugin("com.arpnetworking" % "sbt-typescript" % "0.2.1")
+
+addSbtPlugin("com.github.ddispaltro" % "sbt-reactjs" % "0.5.2")
