@@ -62,6 +62,6 @@ class Application @Inject() (implicit val messagesApi: MessagesApi, webJarAssets
     val keywordData = keywordForm.bindFromRequest.get
     Storage.setKeyword(keywordData.keyword)
     Logger.debug("Create keyword: " + keywordData.keyword)
-    Redirect(routes.Application.keyword)
+    Ok(Json.parse("{\"result\": \"OK\"}"))
   }
 }

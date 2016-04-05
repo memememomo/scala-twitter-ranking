@@ -1,13 +1,6 @@
 @(keywordForm: Form[KeywordData])(implicit messages: Messages, webJarAssets: WebJarAssets)
 
 @main("Welcome to Play") {
-
-    @helper.form(action = routes.Application.createKeyword) {
-        @helper.inputText(keywordForm("keyword"))
-        <input type="submit" value="Create">
-    }
-
     <div id="create-keyword-form" data-url="@routes.Application.createKeyword"></div>
-
     <script src="@routes.Assets.at("javascripts/components/create_keyword_form.js")"></script>
 }
