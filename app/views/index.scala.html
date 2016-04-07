@@ -7,7 +7,7 @@
         @helper.select(queryForm("sort"), options = Seq(("like", "Like"), ("rt", "RT"), ("created", "Created")))
         @helper.inputDate(queryForm("since"))
         <input type="submit" value="Search">
-    }
+   }
 
    @target match {
        case Some(status) => {
