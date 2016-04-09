@@ -4,10 +4,10 @@ var SelectSortForm = React.createClass({
     },
     render: function() {
         var options = this.props.sorts.map(function(sort) {
-            return <option value={sort}>{sort}</option>
+            return <option>{sort}</option>
         });
         return (
-            <select name="sort" onChange={this.onChange}>
+            <select name="sort" onChange={this.onChange} value={this.props.sorts}>
                 {options}
             </select>
         );
@@ -16,13 +16,19 @@ var SelectSortForm = React.createClass({
 
 var SearchForm = React.createClass({
     render: function() {
+        var sorts = ["created", "like", "rt"];
         return (
             <form className="searchForm" onSubmit={this.handleSubmit}>
                 <input type="text" name="keyword"/>
-                <SelectSortForm/>
+                <SelectSortForm sorts={sorts} />
                 <input type="date" name="since"/>
                 <input type="submit" value="Search"/>
             </form>
         );
     }
 });
+
+ReactDOM.render(
+    <SearchForm/>,
+    document.getElementById("main")
+);
